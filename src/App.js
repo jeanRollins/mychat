@@ -1,26 +1,65 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom' 
+
+import Header from './components/Header'
+
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import PageNotFound from './pages/PageNotFound'
+
+import { GetAuth} from './libs/Auth'
+import { GetDocumentForId} from './libs/Firestore'
+import { Loading } from './components/Loading'
 
 function App() {
+
+  const [ userData, setUserData ] = useState( false ) 
+  const [ userFirebase , setUserFirebase ] = useState( false )
+
+  const userGet = async (uid) => {
+      const data =  await GetDocumentForId( 'users', uid )
+      
+      setUserFirebase(data)
+  }
+  const Auth = GetAuth()
+
+  useEffect( () => {
+
+    Auth.onAuthStateChanged( user => {
+      if (user) {
+        userGet(user.uid)
+        setUserData(user.uid)
+      }
+      else {
+        setUserFirebase(true)
+        setUserData(null)
+      }
+    })
+  }, [])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      { (userData !== false) && (userFirebase !== false) ? (
+        <>
+          <Header
+            data = { userData }
+            imageProfile = { userFirebase.file_profile }
+          />
+            <Switch>
+              <Route path="/"            exact component = { Login } /> 
+              <Route path="/dashboard"   exact component = { Dashboard } /> 
+              <Route path = "*"  component = { PageNotFound }  />
+            </Switch>
+        </>
+      ) : (
+        <>
+          <Loading/>
+        </>
+      )}
+    </Router>
+  )
+    
+ 
 }
 
-export default App;
+export default App
