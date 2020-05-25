@@ -100,7 +100,7 @@ function Login(props){
 
     return (
         <>
-            <Title nameTitle = {'Mychat Login'}/>
+            <Title nameTitle = { 'Mychat Login' } />
             <Grid container >
                 <Grid item xs={12} style={{ padding: '10px'}} >
                     <Card style={{width: '100%', padding: '5px'}} className="">

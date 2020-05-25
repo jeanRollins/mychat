@@ -20,3 +20,12 @@ export const Loading = () => {
         </Grid>
     )
 }
+
+export const SimpleLoading = () => {   
+    return(
+        <div style={{ width : '100%' , textAlign: 'center' }} >
+            <CircularProgress/>
+        </div>
+           
+    )
+}

@@ -13,10 +13,44 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const  AlignItemsList = (props) => {
+export const SimpleList  =  ( props )  =>  {
   const classes = useStyles()
 
-  console.log('props***_____' , props);
+  const user = props.data
+
+  return(
+    <List className={classes.root}>
+      <ListItem alignItems="flex-start">
+        <ListItemAvatar>
+          <Avatar 
+            alt = "Remy Sharp" 
+            src = { user.file_profile } />
+        </ListItemAvatar>
+        <ListItemText
+          primary = { user.name }
+          secondary = {
+            <React.Fragment>
+              <Typography
+                component="span"
+                variant="body2"
+                className={classes.inline}
+                color="textPrimary"
+              >
+                { user.number_phone }
+              </Typography>
+              {" — " + user.thought }
+            </React.Fragment>
+          }
+        />
+      </ListItem>
+      <Divider variant="inset" component="li" />
+    </List>
+  )
+    
+}
+
+export const  AlignItemsList = (props) => {
+  const classes = useStyles()
   let lisContact =  props.data
 
   let user = null
@@ -24,7 +58,7 @@ export const  AlignItemsList = (props) => {
     <List className={classes.root}>
 
       { lisContact.map( row => (
-        <>
+        <div key = { row.id }>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
               <Avatar alt="Remy Sharp" src = {row.users[0].file_profile} />
@@ -32,7 +66,7 @@ export const  AlignItemsList = (props) => {
             <ListItemText
               primary = {row.users[0].name }
               secondary={
-                <React.Fragment>
+                <>
                   <Typography
                     component="span"
                     variant="body2"
@@ -42,15 +76,58 @@ export const  AlignItemsList = (props) => {
                     Ali Connors
                   </Typography>
                   {" — I'll be in your neighborhood doing errands this…"}
-                </React.Fragment>
+                </>
               }
             />
           </ListItem>
           <Divider variant="inset" component="li" />
-        </>
+        </div>
       ))}
       
 
     </List>
   );
 }
+
+export const  ItemsList = (props) => {
+  const classes = useStyles()
+  let users =  props.data
+  return (
+    <List className={classes.root}>
+
+      { users.map( row => (
+        <div key = { row.id }>
+          <ListItem 
+            alignItems="flex-start" 
+            button 
+            onClick = { e => props.methodOnClick( row.id ) }>
+            <ListItemAvatar> 
+              <Avatar alt="Remy Sharp" src = {row.file_profile} />
+            </ListItemAvatar>
+            <ListItemText
+              primary = {row.name }
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    className={classes.inline}
+                    color="textPrimary"
+                  >
+                    { 'Número : ' +  row.number_phone }
+                  </Typography>
+                  
+                  { ' '}
+                </React.Fragment>
+              }
+            />
+          </ListItem>
+          <Divider variant="inset" component="li" />
+        </div>
+      ))}
+      
+
+    </List>
+  )
+}
+

@@ -1,5 +1,16 @@
 import {storage,db}from '../config'
 
+//firebase.database.ServerValue.TIMESTAMP
+
+export function GetTimestamp() {
+
+  const fetch = async () => {
+
+    const response  = await db.ServerValue.TIMESTAMP
+    return response
+  }
+  return fetch()
+}
 
 export function GetDocumentWhere( collection , where , type )
 {
@@ -15,12 +26,27 @@ export function GetDocumentWhere( collection , where , type )
   return fetch()
 }
 
-export function GetDocumentWhereArray( collection , where , type )
-{
+export function GetDocumentLike( collection , field , value ){
+
   const fetch = async () => {
-    const response =  await db.collection( collection ).where( where , 'array-contains', type ).get()
+    const response =  await db.collection( collection ).orderBy( field ).startAt( value ).endAt( value + '\uf8ff' ).get()
+    
     const data     =  response.docs.map( doc =>  {
                                               var dataTemp = doc.data()
+                                              dataTemp.id  = doc.id
+                                              return dataTemp
+                                        })
+    return data
+  }
+  return fetch()
+}
+
+export function GetDocumentWhereArray( options )
+{
+  const fetch = async () => {
+    const response =  await db.collection( options.nameCollection ).where( options.query.field , options.query.where , options.query.value ).get()
+    const data     =  response.docs.map( doc =>  {
+                                              let dataTemp = doc.data()
                                               dataTemp.id  = doc.id
                                               return dataTemp
                                         })
@@ -44,10 +70,10 @@ export function GetDocumentWhereConditionals( nameCollection , options )
 
   const fetch = async () => {
 
-    const collection = await db.collection( nameCollection )
+    const collectionRef = await db.collection( nameCollection )
     
     for await ( let row of options){
-      collectionWhere =  collection.where( row.field , row.condition, row.value )
+      collectionWhere =  collectionRef.where( row.field , row.condition, row.value )
     }
     let response = await collectionWhere.get()
     

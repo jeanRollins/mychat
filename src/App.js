@@ -5,6 +5,7 @@ import Header from './components/Header'
 
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Conversation from './pages/Conversation'
 import PageNotFound from './pages/PageNotFound'
 
 import { GetAuth} from './libs/Auth'
@@ -46,9 +47,10 @@ function App() {
             imageProfile = { userFirebase.file_profile }
           />
             <Switch>
-              <Route path="/"            exact component = { Login } /> 
-              <Route path="/dashboard"   exact component = { Dashboard } /> 
-              <Route path = "*"  component = { PageNotFound }  />
+              <Route path = "/"              exact component = { Login } /> 
+              <Route path = "/dashboard"     exact component = { Dashboard } /> 
+              <Route path = "/conversation"  exact component = { Conversation } />
+              <Route path =  "*"  component = { PageNotFound }  />
             </Switch>
         </>
       ) : (
