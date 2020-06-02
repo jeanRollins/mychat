@@ -9,6 +9,7 @@ import { AlignItemsList } from '../components/ListItems'
 import  SearchModal  from '../components/SearchModal'
 
 import { GetAuth } from '../libs/Auth'
+import { LocalStorage } from '../libs/LocalStorage'
 
 
 
@@ -21,7 +22,11 @@ function Dashboard(props) {
     const [searchState, setSearchState] = useState(false)
 
 
-    
+    const goToChat =  ( uid = '' ) => {
+        LocalStorage.set( 'uid' , uid) 
+        props.history.push('/conversation')
+    }
+
     const getDataUser = async () => {
         let documentFounded = await GetDocumentForId( 'users', GetAuth().currentUser.uid )
         let conversationsFounded = await GetConversation( GetAuth().currentUser.uid )
@@ -56,6 +61,7 @@ function Dashboard(props) {
                 <Grid item>
                     <AlignItemsList
                         data = { conversations }
+                        methodOnClick = { goToChat }
                     />
                 </Grid>
             </Grid>

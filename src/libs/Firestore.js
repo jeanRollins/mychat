@@ -6,7 +6,7 @@ export function GetTimestamp() {
 
   const fetch = async () => {
 
-    const response  = await db.ServerValue.TIMESTAMP
+    const response  = await db.FieldValue.serverTimestamp()
     return response
   }
   return fetch()
@@ -114,9 +114,10 @@ export function DeleteDocument( collection, id )
   return fetch()
 }
 
-export function AddCollection(collection, document)
+export async function  AddCollection(collection, document)
 {
   const fetch = async () => {
+
     const response = await db.collection(collection).add( document )
     return response
   }

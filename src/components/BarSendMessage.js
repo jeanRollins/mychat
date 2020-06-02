@@ -3,7 +3,7 @@ import React , {useState} from 'react'
 import { AppBar , Toolbar, Grid, Fab, TextField } from '@material-ui/core'
 import SendIcon from '@material-ui/icons/Send'
 import { makeStyles } from '@material-ui/core/styles'
-import { AddMessage } from '../libs/Messages'
+import { AddConversationMessage } from '../libs/Messages'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -50,9 +50,9 @@ const BarSendMessage = (props) => {
     const [ receiver , seTreceiver ] = useState( props.receiver)
     const [ transmitter , setTransmitter ] = useState(props.transmitter)
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
 
-        let  validateMessage = validate()
+        let  validateMessage = await validate()
 
         if( !validateMessage ){
             return false 
@@ -66,16 +66,17 @@ const BarSendMessage = (props) => {
                 receiver ,
                 transmitter
             }
-            
-            //const responseAdd = AddMessage( documentForAdd )
-            console.log( 'documentForAdd**' , documentForAdd );
-            
-            
-        } catch (error) {
-            
-        }
 
+            const responseAdd = await AddConversationMessage( documentForAdd )
+            if( await !responseAdd ){
+                console.log('error al ingresar');
+                return
+            }
+            console.log('*******');
+            
+            setMessage('')
 
+        } catch ( error ) { }
     }
     
     const validate = () => {

@@ -52,6 +52,8 @@ export const SimpleList  =  ( props )  =>  {
 export const  AlignItemsList = (props) => {
   const classes = useStyles()
   let lisContact =  props.data
+  console.log( 'props***' , props);
+  
 
   let user = null
   return (
@@ -59,7 +61,11 @@ export const  AlignItemsList = (props) => {
 
       { lisContact.map( row => (
         <div key = { row.id }>
-          <ListItem alignItems="flex-start">
+          <ListItem 
+            alignItems="flex-start"
+            button 
+            onClick = { e => props.methodOnClick( row.users[0].id ) }  
+          >
             <ListItemAvatar>
               <Avatar alt="Remy Sharp" src = {row.users[0].file_profile} />
             </ListItemAvatar>

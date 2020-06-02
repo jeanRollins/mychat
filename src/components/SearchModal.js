@@ -70,24 +70,24 @@ const SearchModal = (props) => {
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
-                timeout: 500,
+                    timeout: 500,
                 }}
             >
                 <Fade in={open}>
-                <div className={classes.paper}>
-                    <h3 id="transition-modal-title">¿Con quién deseas hablar?</h3>
-                    <TextField 
-                        fullWidth 
-                        label    = "Buscar personas" 
-                        onChange = { e => setSearchValue( e.target.value ) } 
-                        variant  = "outlined" 
-                    />
+                    <div className={classes.paper}>
+                        <h3 id="transition-modal-title">¿Con quién deseas hablar?</h3>
+                        <TextField 
+                            fullWidth 
+                            label    = "Buscar personas" 
+                            onChange = { e => setSearchValue( e.target.value ) } 
+                            variant  = "outlined" 
+                        />
 
-                    <ItemsList
-                        data = {users }
-                        methodOnClick = { goToChat }
-                    />
-                </div>
+                        <ItemsList
+                            data = {users }
+                            methodOnClick = { goToChat }
+                        />
+                    </div>
                 </Fade>
             </Modal>
         </>

@@ -1,18 +1,19 @@
 import React from 'react'
+import { GetTime, GetDate } from './Commons'
 
 import { 
-        GetDocumentWhereArray, 
-        GetDocumentForId, 
-        GetDocumentWhereConditionals, 
-        AddCollection ,
-        GetTimestamp
-    } from './Firestore'
+    GetDocumentWhereArray , 
+    GetDocumentForId , 
+    AddCollection 
+} from './Firestore'
 
 export const GetConversation = ( uid ) => {
     
+    console.log( 'GetConversation *****' , uid )
+    
     const fetch = async () => {
-        let conversation = [] 
-        
+
+        let conversation = []       
         const options = {
             nameCollection : 'conversation' ,
             query : {
@@ -50,38 +51,104 @@ export const GetConversation = ( uid ) => {
 export const AddMessage = ( document ) => {
     
     const fetch = async () => {
-        document.dateSend = GetTimestamp()
-        const response = await AddCollection( 'message' , document )
+
+        document.timeCreate =  GetTime()
+        document.dateCreate =  GetDate()
+        document.dateSend   =  new Date()
+        const response      =  await AddCollection( 'message' , document )
         return  response 
     }
     return fetch()
 }  
 
-export const ValidateNewConversation = ( myUid, uidUser ) => {
-    
+export const AddConversationMessage = ( document ) => {
+
+
     const fetch = async () => {
-        let conversation = [] 
-        console.log( 'myUid**'   , myUid  )
-        console.log( 'uidUser**'   , uidUser  )
+        
+        console.log( 'document______________*****************' , document )
 
-        let options = [
-            { field : 'state' , condition : 'array-contains' , value : 1  }
-        ]
+        if ( document.conversationId === false ) {
 
-        let response = await GetDocumentWhereConditionals('users', options )
+            const conversation = {
+                createConversation : new Date() ,
+                timeCreate : GetTime() ,
+                dateCreate : GetDate() ,
+                participants : [ document.transmitter , document.receiver ] ,
+                lastMessage : {}
+            }
 
-        let res = response.docs.map( row => row )
-        console.log( 'res**'   , res )
+            const responseConv = await AddConversation( conversation )
+        
+            document.conversationId = responseConv.id
+
+            const response = await AddMessage( document )
+
+            return responseConv.id
+        }
+        else {
+
+            const response = await AddMessage( document )
+
+            return response.id
+           
+        }
 
         
+    }
+    return fetch()
+}
 
-        /*
-        let responseConversationMyUid   = await GetDocumentWhereArray( 'conversation' , 'participants', myUid )
-        let responseConversationUidUser = await GetDocumentWhereArray( 'conversation' , 'participants', uidUser )
-        console.log( 'responseConversationMyUid**'   , responseConversationMyUid  )
-        console.log( 'responseConversationUidUser**' , responseConversationUidUser )
-        */
-        //return conversation        
+
+
+export const AddConversation = ( document ) => {
+    
+    const fetch = async () => {
+
+
+        const response = await AddCollection( 'conversation' , document )
+        return  response 
+    }
+    return fetch()
+}  
+
+export const MessagesConversation = ( myUid, uidUser ) => {
+    
+    const fetch = async () => {
+
+        const options = {
+            nameCollection : 'conversation' ,
+            query : { 
+                field : 'participants' ,
+                where : 'array-contains' , 
+                value :  myUid 
+            }
+        }
+
+        let conversationsFounded =  await GetDocumentWhereArray( options )
+        conversationsFounded     =  await conversationsFounded.filter( row => row.participants.includes( uidUser ) )
+        
+        if ( conversationsFounded.length == 0 ){
+            return []
+        }
+        
+        const conversation = conversationsFounded[0]
+
+        const searchMessages = {
+            nameCollection : 'message' ,
+            query : { 
+                field : 'conversationId' ,
+                where : '==' , 
+                value :  conversation.id
+            }
+        }
+
+        const messagesFounded =  await GetDocumentWhereArray( searchMessages )
+        
+        return {
+            conversation ,
+            messages : messagesFounded
+        }        
     }
     return fetch()
 } 
